@@ -1,4 +1,6 @@
+import { Agent } from "@/components/Agent";
 import { DisplayTechIcons } from "@/components/DisplayTechIcons";
+import { getCurrentUser } from "@/lib/actions/auth.action";
 import { getInterviewById } from "@/lib/actions/general.action";
 import { getRandomInterviewCover } from "@/lib/utils";
 import Image from "next/image";
@@ -9,6 +11,8 @@ export default async function Page({ params }: RouteParams) {
   const { id } = await params;
   const interview = await getInterviewById(id);
   if (!interview) redirect("/");
+
+  const user = await getCurrentUser();
   return (
     <>
       <div className="flex flex-row gap-4 justify-between">
@@ -29,6 +33,13 @@ export default async function Page({ params }: RouteParams) {
           {interview.type}
         </p>
       </div>
+      <Agent
+        userName={user?.name}
+        type={"interview"}
+        interviewId={id}
+        userId={user?.id}
+        questions={interview.questions}
+      />
     </>
   );
 }
